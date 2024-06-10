@@ -1,32 +1,64 @@
-menu = """
-
-[d] Depositar
-[s] Sacar
-[e] Extrato
-[q] Sair
-
-=> """
+import os
+import time
 
 saldo = 0.0
 limite = 500
 extrato = ""
 numero_saques = 0
 LIMITE_SAQUES = 3
+SLEEP = 5
+
+
+def limpar_tela():
+    if os.name == "posix": 
+        os.system("clear")
+    else:
+        os.system("cls")
+        
+def executar_menu(limpar_tela):
+    menu = """
+
+    [d] Depositar
+    [s] Sacar
+    [e] Extrato
+    [q] Sair
+    
+    """
+    
+    limpar_tela()
+    print(menu)
+    
+    return input("Escolha uma opção do menu: ")
+   
+
+def imprimir_extrato(limpar_tela, extrato):
+    limpar_tela()
+    print("Extrato\n")
+    print(extrato)
+    print("Saldo disponível: R$ {saldo}")
+    time.sleep(SLEEP)
+    
+
+def executar_deposito(limpar_tela, saldo, extrato):
+    limpar_tela()
+    deposito = float(input("Digite o valor desejado para o depósito: "))
+    if deposito <= 0:
+        print("Impossível fazer o depósito. Valor inválido")
+    else:
+        saldo += deposito
+        extrato += f"Depósito: R$ {deposito:.2f}\n"
+
+        print("Depósito efetuado com sucesso")
+        print(f"Novo saldo: R$ {saldo:.2f}")
+    
+    return saldo, extrato
 
 while True:
-    print(menu)
-    opcao = input("Escolha uma opção do menu: ")
+    opcao = executar_menu()
     if opcao == "d":
-        deposito = float(input("Digite o valor desejado para o depósito: "))
-        if deposito <= 0:
-            print("Impossível fazer o depósito. Valor inválido")
-        else:
-            saldo += deposito
-            extrato += f"Depósito: R$ {deposito:.2f}\n"
-
-            print("Depósito efetuado com sucesso")
-            print(f"Novo saldo: R$ {saldo:.2f}")
+        saldo, extrato = executar_deposito(limpar_tela, saldo, extrato)
     elif  opcao == "s":
+        limpar_tela()
         saque = float(input("Digite o valor desejado para o saque: "))
         if saque > limite:
             print(f"Excedeu o limite de saque (R$ {limite:.2f})")
@@ -44,11 +76,11 @@ while True:
             print("Saque efetuado com sucesso")
             print(f"Novo saldo: R$ {saldo:.2f}")
     elif opcao == "e":
-        print("Extrato\n")
-        print(extrato)
-        print("Saldo: R$ {saldo}")
+        imprimir_extrato(limpar_tela, extrato)
     elif opcao == "q":
         break
     else:
+        limpar_tela()
         print("Opção inválida")
+        time.sleep(SLEEP)
         
